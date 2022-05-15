@@ -1112,6 +1112,9 @@ def main():
     ]
 
     sht40 = SHT40()
+    def get_sht40_reading(sht40):
+        return sht40.reading
+    schedule.every(10).seconds.do(get_sht40_reading, sht40=sht40)
 
     alarm = Alarm(image)
 
