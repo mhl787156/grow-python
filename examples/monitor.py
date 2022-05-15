@@ -6,6 +6,7 @@ import random
 import sys
 import threading
 import time
+import os
 
 import ltr559
 import RPi.GPIO as GPIO
@@ -19,7 +20,12 @@ import yaml
 from grow import Piezo
 from grow.moisture import Moisture
 from grow.pump import Pump
+from grow.sht40 import SHT40
 
+from datetime import datetime
+from influxdb_client import InfluxDBClient, Point, WritePrecision
+from influxdb_client.client.write_api import SYNCHRONOUS
+import schedule
 
 FPS = 10
 
@@ -48,6 +54,12 @@ icon_settings = Image.open("icons/icon-settings.png").convert("RGBA")
 icon_channel = Image.open("icons/icon-channel.png").convert("RGBA")
 icon_backdrop = Image.open("icons/icon-backdrop.png").convert("RGBA")
 icon_return = Image.open("icons/icon-return.png").convert("RGBA")
+
+# Influx
+influx_url = os.environ.get("INFLUX_URL")
+influx_token = os.environ.get("INFLUX_TOKEN")
+influx_org = os.environ.get("INFLUX_ORG")
+influx_bucket = os.environ.get("INFLUX_BUCKET")
 
 
 class View:
@@ -386,14 +398,13 @@ class SettingsView(EditView):
 
 class SHT40View(View):
     """View Sensor Readings."""
-    def __init__(self, image):
-        self.sht = adafruit_sht4x.SHT4x(board.I2C())
-        self.sht.mode = adafruit_sht4x.Mode.NOHEAT_HIGHPRECISION
+    def __init__(self, image, sht):
+        self.sht = sht
         View.__init__(self, image)
 
     def render(self):
         self.clear()
-        temp, hum = self.sht.measurements
+        temp, hum = self.sht.reading
 
         self._draw.text(
             (28, 5),
@@ -977,6 +988,8 @@ class Config:
         self.general_settings = [
             "alarm_enable",
             "alarm_interval",
+            "influxdb_enabled",
+            "influxdb_period_minutes"
         ]
 
     def load(self, settings_file="settings.yml"):
@@ -1031,6 +1044,24 @@ class Config:
     def set_general(self, settings):
         self.set("general", settings)
 
+def send_to_influx_db(channels, light, sht40):
+
+    with InfluxDBClient(influx_url, token=influx_token, org=influx_org) as client:
+
+        temp, hum = sht40.reading
+
+        point = Point("greenhouse") \
+                    .tag("location", "greenhouse") \
+                    .field("moisture_1", channels[0].sensor.moisture()) \
+                    .field("moisture_2", channels[1].sensor.moisture()) \
+                    .field("moisture_3", channels[2].sensor.moisture()) \
+                    .field("temperature", temp) \
+                    .field("relative_humidity", hum) \
+                    .field("light_level", light.get_lux())
+                    .time(datetime.utcnow(), WritePrecision.NS)
+        
+        write_api.write(influx_bucket, influx_org, point)
+
 
 def main():
     def handle_button(pin):
@@ -1077,6 +1108,12 @@ def main():
         Channel(2, 2, 2),
         Channel(3, 3, 3),
     ]
+
+    sht40 = SHT40()
+
+    # Schedule InfluxDB
+    if config.get_general().get("influxdb_enabled", False):
+        schedule.every(config.get_general().get("influxdb_period_minutes", 5)).minutes.do(send_to_influx_db, channels=channels, light=light, sht40=sht40)
 
     alarm = Alarm(image)
 
@@ -1188,6 +1225,8 @@ Low Light Value {:.2f}
         )
 
         config.save()
+
+        schedule.run_pending()
 
         time.sleep(1.0 / FPS)
 
