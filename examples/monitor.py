@@ -1111,13 +1111,13 @@ def main():
 
     sht40 = SHT40()
 
-    # Schedule InfluxDB
-    if config.get_general().get("influxdb_enabled", False):
-        schedule.every(config.get_general().get("influxdb_period_minutes", 5)).minutes.do(send_to_influx_db, channels=channels, light=light, sht40=sht40)
-
     alarm = Alarm(image)
 
     config = Config()
+
+    # Schedule InfluxDB
+    if config.get_general().get("influxdb_enabled", False):
+        schedule.every(config.get_general().get("influxdb_period_minutes", 5)).minutes.do(send_to_influx_db, channels=channels, light=light, sht40=sht40)
 
     GPIO.setmode(GPIO.BCM)
     GPIO.setwarnings(False)
