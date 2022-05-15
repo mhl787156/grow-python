@@ -10,6 +10,8 @@ import time
 import ltr559
 import RPi.GPIO as GPIO
 import ST7735
+import board
+import adafruit_sht4x
 from fonts.ttf import RobotoMedium as UserFont
 from PIL import Image, ImageDraw, ImageFont
 
@@ -382,6 +384,34 @@ class SettingsView(EditView):
         )
         EditView.render(self)
 
+class SHT40View(View):
+    """View Sensor Readings."""
+    def __init__(self, image):
+        self.sht = adafruit_sht4x.SHT4x(board.i2c)
+        self.sht.mode = adafruit_sht4x.Mode.NOHEAT_HIGHPRECISION
+        View.__init__(self, image)
+
+    def render(self):
+        self.clear()
+        temp, hum = self.sht.measurements
+        self._draw.text(
+            (28, 5),
+            f"Temp and Humidity Sensor: {hex(sht.serial_number)}",
+            font=self.font,
+            fill=COLOR_WHITE,
+        )
+        self._draw.text(
+            (28, 20),
+            f"Temperature: {temp:.1f} C",
+            font=self.font,
+            fill=COLOR_WHITE,
+        )
+        self._draw.text(
+            (28, 40),
+            f"Humidity: {hum:.1f} %",
+            font=self.font,
+            fill=COLOR_WHITE,
+        )
 
 class ChannelView(View):
     """Base class for a view that deals with a specific channel instance."""
@@ -1106,6 +1136,10 @@ Low Light Value {:.2f}
                 MainView(image, channels=channels, alarm=alarm),
                 SettingsView(image, options=main_options),
             ),
+            (
+                MainView(image, channels=channels, alram=alarm),
+                SHT40View(image)
+            )
             (
                 DetailView(image, channel=channels[0]),
                 ChannelEditView(image, channel=channels[0]),
