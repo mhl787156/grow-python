@@ -1057,7 +1057,7 @@ def send_to_influx_db(channels, light, sht40):
                     .field("moisture_3", channels[2].sensor.moisture()) \
                     .field("temperature", temp) \
                     .field("relative_humidity", hum) \
-                    .field("light_level", light.get_lux())
+                    .field("light_level", light.get_lux()) \
                     .time(datetime.utcnow(), WritePrecision.NS)
         
         write_api.write(influx_bucket, influx_org, point)
