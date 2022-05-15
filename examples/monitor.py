@@ -396,7 +396,7 @@ class SHT40View(View):
         temp, hum = self.sht.measurements
         self._draw.text(
             (28, 5),
-            f"Temp and Humidity Sensor: {hex(sht.serial_number)}",
+            f"Temp and Humidity Sensor: {hex(self.sht.serial_number)}",
             font=self.font,
             fill=COLOR_WHITE,
         )
