@@ -1051,9 +1051,9 @@ def send_to_influx_db(channels, light, sht40):
 
         point = Point("greenhouse") \
                     .tag("location", "greenhouse") \
-                    .field("moisture_1", channels[0].sensor.moisture()) \
-                    .field("moisture_2", channels[1].sensor.moisture()) \
-                    .field("moisture_3", channels[2].sensor.moisture()) \
+                    .field("moisture_1", channels[0].sensor.moisture) \
+                    .field("moisture_2", channels[1].sensor.moisture) \
+                    .field("moisture_3", channels[2].sensor.moisture) \
                     .field("temperature", temp) \
                     .field("relative_humidity", hum) \
                     .field("light_level", light.get_lux()) \
