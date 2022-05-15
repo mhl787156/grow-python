@@ -2,6 +2,7 @@ import board
 import adafruit_sht4x
 import time
 from copy import deepcopy
+import schedule
 
 class SHT40(object):
 
@@ -16,7 +17,9 @@ class SHT40(object):
         self._history_length = 200
 
         self._time_start = time.time()
+
         schedule.every(10).seconds.do(lambda x: self.reading)
+
     @property
     def history(self):
         return self._history
