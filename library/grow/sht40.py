@@ -26,7 +26,6 @@ class SHT40(object):
     def _time_elapsed(self):
         return time.time() - self._time_last_reading
 
-    @property
     def reading(self):
         self._reading = self.sht.measurements
         self.history.append(deepcopy(self._reading))

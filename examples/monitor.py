@@ -404,7 +404,7 @@ class SHT40View(View):
 
     def render(self):
         self.clear()
-        temp, hum = self.sht.reading
+        temp, hum = self.sht.reading()
 
         self._draw.text(
             (28, 5),
@@ -1048,7 +1048,7 @@ def send_to_influx_db(channels, light, sht40):
 
     with InfluxDBClient(influx_url, token=influx_token, org=influx_org) as client:
 
-        temp, hum = sht40.reading
+        temp, hum = sht40.reading()
 
         point = Point("greenhouse") \
                     .tag("location", "greenhouse") \
@@ -1112,9 +1112,7 @@ def main():
     ]
 
     sht40 = SHT40()
-    def get_sht40_reading(sht40):
-        return sht40.reading
-    schedule.every(10).seconds.do(get_sht40_reading, sht40=sht40)
+    schedule.every(10).seconds.do(sht40.reading)
 
     alarm = Alarm(image)
 
@@ -1200,7 +1198,9 @@ Low Light Value {:.2f}
 
     # Schedule InfluxDB
     if config.get_general().get("influxdb_enabled", False):
-        schedule.every(config.get_general().get("influxdb_period_minutes", 5)).minutes.do(send_to_influx_db, channels=channels, light=light, sht40=sht40)
+        mins = config.get_general().get("influxdb_period_minutes", 5)
+        print(f"influxdb_period_minutes: {mins}")
+        schedule.every(mins).minutes.do(send_to_influx_db, channels=channels, light=light, sht40=sht40)
 
     while True:
         for channel in channels:
