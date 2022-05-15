@@ -18,7 +18,7 @@ class SHT40(object):
 
         self._time_start = time.time()
 
-        schedule.every(10).seconds.do(lambda x: self.reading)
+        schedule.every(10).seconds.do(lambda: self.reading)
 
     @property
     def history(self):
