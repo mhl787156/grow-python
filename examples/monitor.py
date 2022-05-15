@@ -396,19 +396,19 @@ class SHT40View(View):
         temp, hum = self.sht.measurements
 
         self._draw.text(
-            (6, 5),
-            f"SHT40: {hex(self.sht.serial_number)}",
+            (28, 5),
+            f"SHT40",
             font=self.font,
             fill=COLOR_WHITE,
         )
         self._draw.text(
-            (6, 25),
+            (6, 30),
             f"Temp: {temp:.1f} C",
             font=self.font,
             fill=COLOR_WHITE,
         )
         self._draw.text(
-            (6, 50),
+            (6, 55),
             f"Hum: {hum:.1f} %",
             font=self.font,
             fill=COLOR_WHITE,
