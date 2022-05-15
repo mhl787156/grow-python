@@ -1062,6 +1062,8 @@ def send_to_influx_db(channels, light, sht40):
         
         write_api.write(influx_bucket, influx_org, point)
 
+        print("Sent point to influxdb", point)
+
 
 def main():
     def handle_button(pin):
@@ -1114,10 +1116,6 @@ def main():
     alarm = Alarm(image)
 
     config = Config()
-
-    # Schedule InfluxDB
-    if config.get_general().get("influxdb_enabled", False):
-        schedule.every(config.get_general().get("influxdb_period_minutes", 5)).minutes.do(send_to_influx_db, channels=channels, light=light, sht40=sht40)
 
     GPIO.setmode(GPIO.BCM)
     GPIO.setwarnings(False)
@@ -1196,6 +1194,10 @@ Low Light Value {:.2f}
             ),
         ]
     )
+
+    # Schedule InfluxDB
+    if config.get_general().get("influxdb_enabled", False):
+        schedule.every(config.get_general().get("influxdb_period_minutes", 5)).minutes.do(send_to_influx_db, channels=channels, light=light, sht40=sht40)
 
     while True:
         for channel in channels:
