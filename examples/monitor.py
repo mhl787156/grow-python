@@ -387,7 +387,7 @@ class SettingsView(EditView):
 class SHT40View(View):
     """View Sensor Readings."""
     def __init__(self, image):
-        self.sht = adafruit_sht4x.SHT4x(board.I2C)
+        self.sht = adafruit_sht4x.SHT4x(board.I2C())
         self.sht.mode = adafruit_sht4x.Mode.NOHEAT_HIGHPRECISION
         View.__init__(self, image)
 
