@@ -1060,6 +1060,7 @@ def send_to_influx_db(channels, light, sht40):
                     .field("light_level", light.get_lux()) \
                     .time(datetime.utcnow(), WritePrecision.NS)
         
+        write_api = client.write_api(write_options=SYNCHRONOUS)
         write_api.write(influx_bucket, influx_org, point)
 
         print("Sent point to influxdb", point)
