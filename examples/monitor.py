@@ -394,24 +394,29 @@ class SHT40View(View):
     def render(self):
         self.clear()
         temp, hum = self.sht.measurements
+
         self._draw.text(
-            (28, 5),
-            f"Temp and Humidity Sensor: {hex(self.sht.serial_number)}",
+            (6, 5),
+            f"SHT40: {hex(self.sht.serial_number)}",
             font=self.font,
             fill=COLOR_WHITE,
         )
         self._draw.text(
-            (28, 20),
-            f"Temperature: {temp:.1f} C",
+            (6, 25),
+            f"Temp: {temp:.1f} C",
             font=self.font,
             fill=COLOR_WHITE,
         )
         self._draw.text(
-            (28, 40),
-            f"Humidity: {hum:.1f} %",
+            (6, 50),
+            f"Hum: {hum:.1f} %",
             font=self.font,
             fill=COLOR_WHITE,
         )
+
+        # Next button
+        self.icon(icon_backdrop, (0, 0), COLOR_WHITE)
+        self.icon(icon_rightarrow, (3, 3), (55, 55, 55))
 
 class ChannelView(View):
     """Base class for a view that deals with a specific channel instance."""
