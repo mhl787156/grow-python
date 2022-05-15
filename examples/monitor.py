@@ -1200,7 +1200,7 @@ Low Light Value {:.2f}
     if config.get_general().get("influxdb_enabled", False):
         mins = config.get_general().get("influxdb_period_minutes", 5)
         print(f"influxdb_period_minutes: {mins}")
-        send_to_influx_db(channels, light. sht40)
+        send_to_influx_db(channels, light, sht40)
         schedule.every(mins).minutes.do(send_to_influx_db, channels=channels, light=light, sht40=sht40)
 
     while True:
