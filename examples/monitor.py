@@ -1137,9 +1137,9 @@ Low Light Value {:.2f}
                 SettingsView(image, options=main_options),
             ),
             (
-                # MainView(image, channels=channels, alarm=alarm),
+                MainView(image, channels=channels, alarm=alarm),
                 SHT40View(image)
-            )
+            ),
             (
                 DetailView(image, channel=channels[0]),
                 ChannelEditView(image, channel=channels[0]),
