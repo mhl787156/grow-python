@@ -28,6 +28,6 @@ class SHT40(object):
 
     def reading(self):
         self._reading = self.sht.measurements
-        self.history.append(deepcopy(self._reading))
-        self.history = self._history[:self._history_length]
+        self._history.append(deepcopy(self._reading))
+        self._history = self._history[:self._history_length]
         return self._reading
