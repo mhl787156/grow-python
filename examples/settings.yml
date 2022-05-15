@@ -26,9 +26,9 @@ channel3:
   watering_delay: 60
   wet_point: 3
 general:
-  alarm_enable: true
+  alarm_enable: false
   alarm_interval: 2
   light_level_low: 4.0
-  black_screen_when_light_low: false
+  black_screen_when_light_low: true
   influxdb_enabled: true
   influxdb_period_minutes: 5
