@@ -30,3 +30,5 @@ general:
   alarm_interval: 2
   light_level_low: 4.0
   black_screen_when_light_low: false
+  influxdb_enabled: true
+  influxdb_period_minutes: 5
