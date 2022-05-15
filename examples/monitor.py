@@ -1178,7 +1178,7 @@ Low Light Value {:.2f}
             ),
             (
                 # MainView(image, channels=channels, alarm=alarm),
-                SHT40View(image)
+                SHT40View(image, sht40)
             ),
             (
                 DetailView(image, channel=channels[0]),
